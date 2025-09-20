@@ -1,5 +1,5 @@
 /* =========================
-   Moodify — App.css (full)
+   Moodify — App.css (FULL)
    ========================= */
 
 /* ---------- Theme vars ---------- */
@@ -11,12 +11,19 @@
 
   --accent-inspired-1: #6a5acd;
   --accent-inspired-2: #8a2be2;
-  --accent-angry-1: #ff5a5f;
-  --accent-angry-2: #ff8a5b;
+  --accent-angry-1: #ff0000;
+  --accent-angry-2: #e2551d;
+  /* new: happy & sad accents */
+  --accent-happy-1: #ffd24b;
+  --accent-happy-2: #78d478;
+  --accent-sad-1:   #4e7de0;
+  --accent-sad-2:   #243b74;
 
   --ring-track: #e9e9f2;
   --ring-accent: #ffcc00;
   --ring-shadow: rgba(0,0,0,.12);
+
+  --topbar-h: 56px;
 }
 
 /* ---------- Reset ---------- */
@@ -32,22 +39,64 @@ body{
 }
 a{ color: inherit; text-decoration: none; }
 
-/* ---------- Top bar ---------- */
+/* =========================================================
+   TOP BAR (refined, centered, aligned, overflow-friendly)
+   ========================================================= */
 .site-top{
-  position: sticky; top: 0; z-index: 50;
-  display: flex; align-items: center; justify-content: space-between;
-  width: 100%;
-  padding: 14px clamp(16px, 3vw, 48px);
-  background: rgba(0,0,0,.35);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(255,255,255,.06);
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,.08);
 }
-.logo{ font-weight: 800; }
-.nav-links{ display: flex; gap: 12px; }
-.nav-links a{ padding: 6px 10px; border-radius: 8px; }
-.nav-links a.active{ background: rgba(255,255,255,.08); }
+.top-inner{
+  height: var(--topbar-h);
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 3vw, 28px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+/* brand */
+.logo{
+  display: inline-flex; align-items: center; gap: 8px;
+  font-weight: 800; letter-spacing: .2px;
+}
+.logo-mark{ font-size: 18px; }
+.logo-text{ line-height: 1; }
+/* nav row */
+.nav-links{
+  display: flex; align-items: center; gap: 8px;
+  overflow: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+}
+.nav-links::-webkit-scrollbar{ display: none; }
+/* each link pill */
+.nav-link{
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 36px; padding: 0 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  color: #e9e9ef;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+  transition: transform .15s ease, background .2s ease, border-color .2s ease, color .2s ease;
+  white-space: nowrap;
+}
+.nav-link:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); }
+.nav-link:focus-visible{ outline: 2px solid #ffcc00; outline-offset: 2px; }
+.nav-link.active{
+  color: #fff;
+  background: linear-gradient(135deg, #8a2be2, #ff8a5b);
+  border-color: transparent;
+  box-shadow: 0 6px 18px rgba(0,0,0,.28);
+}
+.nav-emoji{ display:inline-block; width: 1.2em; text-align:center; }
+.nav-label{ line-height: 1; }
 
-/* ---------- Page shells (FULL BLEED) ---------- */
+/* ---------- Page shells ---------- */
 .page{ width: 100%; margin: 0; padding: 0; min-height: 100vh; }
 
 /* Ambient mood canvases */
@@ -61,22 +110,34 @@ a{ color: inherit; text-decoration: none; }
     radial-gradient(1400px 480px at 50% 0%, rgba(255,90,95,.36), rgba(255,90,95,0) 70%),
     linear-gradient(180deg, rgba(255,90,95,.36) 0%, rgba(255,138,91,.20) 45%, rgba(10,10,14,.22) 100%);
 }
+.page.happy-page{
+  background:
+    radial-gradient(1400px 480px at 50% 0%, rgba(255,223,88,.32), rgba(255,223,88,0) 70%),
+    linear-gradient(180deg, rgba(255,210,90,.34) 0%, rgba(120,200,120,.18) 45%, rgba(10,10,14,.22) 100%);
+}
+.page.sad-page{
+  background:
+    radial-gradient(1400px 480px at 50% 0%, rgba(88,150,255,.30), rgba(88,150,255,0) 70%),
+    linear-gradient(180deg, rgba(70,120,220,.32) 0%, rgba(50,80,150,.22) 45%, rgba(10,10,14,.22) 100%);
+}
 
-/* ---------- Mood hero (full width) ---------- */
+/* ---------- Mood hero ---------- */
 .mood-hero{
   color: #fff;
   padding: 88px clamp(16px, 3vw, 48px) 44px;
   background-size: 400% 400%;
   animation: gradientShift 12s ease infinite;
   box-shadow: 0 0 24px rgba(0,0,0,.18) inset;
-  position: relative; /* particles stacking context */
+  position: relative;
   overflow: hidden;
 }
 .mood-hero .inner{ max-width: none; margin: 0; position: relative; z-index: 1; }
 .mood-hero h1{ margin: 0; font-size: 44px; font-weight: 800; }
 .mood-hero p{ margin: 10px 0 0; opacity: .95; font-size: 18px; }
 .mood-hero.inspired{ background: linear-gradient(270deg, var(--accent-inspired-1), var(--accent-inspired-2)); }
-.mood-hero.angry{ background: linear-gradient(270deg, var(--accent-angry-1), var(--accent-angry-2)); }
+.mood-hero.angry{    background: linear-gradient(270deg, var(--accent-angry-1), var(--accent-angry-2)); }
+.mood-hero.happy{    background: linear-gradient(270deg, var(--accent-happy-1), var(--accent-happy-2)); }
+.mood-hero.sad{      background: linear-gradient(270deg, var(--accent-sad-1),   var(--accent-sad-2)); }
 
 @keyframes gradientShift{
   0%{ background-position: 0% 50%; }
@@ -95,7 +156,6 @@ a{ color: inherit; text-decoration: none; }
   gap: 28px;
   align-items: stretch;
 }
-
 .product-card{
   display: flex; flex-direction: column; height: 100%;
   background: var(--card);
@@ -127,7 +187,6 @@ a{ color: inherit; text-decoration: none; }
   display: block; border-bottom: 1px solid rgba(255,255,255,0.06);
   filter: brightness(1.05) contrast(1.02);
 }
-
 .product-info{
   display: flex; justify-content: space-between; align-items: center;
   gap: .6rem; padding: 1rem 0 .5rem;
@@ -136,11 +195,57 @@ a{ color: inherit; text-decoration: none; }
 .product-info span{ color: #ffcc00; font-weight: 800; }
 .product-tagline{ color: var(--muted); font-size: 13px; min-height: 40px; }
 
-/* pills (optional) */
+/* pills */
 .pill-row{ display: flex; gap: 6px; flex-wrap: wrap; min-height: 28px; }
 .pill{ font-size: 12px; padding: 4px 8px; background: #222; color:#ddd; border-radius: 999px; }
 
-/* ---------- Buttons (mood-tinted) ---------- */
+/* --- Card content locking for consistent button alignment --- */
+
+/* 1) Title: single line, ellipsis; consistent block height */
+.product-info h3{
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.2;
+  max-width: 75%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-height: calc(1.2em); /* lock the row height */
+}
+
+/* 2) Tagline: clamp to 2 lines so cards don't grow */
+.product-tagline{
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: calc(1.25em * 2); /* ensures same height even if empty */
+}
+
+/* 3) Pills: keep to one line, fade overflow on the right */
+.pill-row{
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;        /* 👈 prevent wrapping that changes height */
+  align-items: center;
+  min-height: 28px;
+  max-height: 28px;         /* 👈 fixed row height */
+  overflow: hidden;
+  /* subtle fade to indicate more tags */
+  -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+          mask-image: linear-gradient(90deg, #000 85%, transparent);
+}
+.pill{ white-space: nowrap; }
+
+/* 4) Make sure the button always hugs the bottom (already flex column) */
+.product-card{ display: flex; flex-direction: column; }
+.product-card .btn{ margin-top: auto; }
+
+
+/* ---------- Buttons ---------- */
 .btn{
   position: relative; display: inline-flex; align-items: center; justify-content: center;
   width: 100%; height: 44px; padding: 0 14px;
@@ -151,8 +256,9 @@ a{ color: inherit; text-decoration: none; }
 .btn:hover{ transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0,0,0,.12); }
 .btn:active{ transform: translateY(0); filter: brightness(.96); }
 .btn:focus-visible{ outline: 2px solid #000; outline-offset: 2px; }
+.btn:disabled{ opacity:.6; cursor:not-allowed; filter: none; box-shadow: none; }
 
-/* mood gradients */
+/* mood gradients on buttons */
 .page.inspired-page .btn{
   background: linear-gradient(135deg, var(--accent-inspired-1), var(--accent-inspired-2));
   box-shadow: 0 8px 20px rgba(138,43,226,.28);
@@ -161,8 +267,21 @@ a{ color: inherit; text-decoration: none; }
   background: linear-gradient(135deg, var(--accent-angry-1), var(--accent-angry-2));
   box-shadow: 0 8px 20px rgba(255,90,95,.28);
 }
+/* NEW: happy & sad button styles */
+.page.happy-page .btn{
+  background: linear-gradient(135deg, var(--accent-happy-1), var(--accent-happy-2));
+  box-shadow: 0 8px 20px rgba(255,210,75,.28);
+}
+.page.sad-page .btn{
+  background: linear-gradient(135deg, var(--accent-sad-1), var(--accent-sad-2));
+  box-shadow: 0 8px 20px rgba(78,125,224,.28);
+}
+
 .page.inspired-page .btn:hover{ box-shadow: 0 10px 26px rgba(138,43,226,.36); }
-.page.angry-page .btn:hover{ box-shadow: 0 10px 26px rgba(255,90,95,.36); }
+.page.angry-page .btn:hover{    box-shadow: 0 10px 26px rgba(255,90,95,.36); }
+/* NEW: happy & sad hovers */
+.page.happy-page .btn:hover{    box-shadow: 0 10px 26px rgba(255,210,75,.36); }
+.page.sad-page .btn:hover{      box-shadow: 0 10px 26px rgba(78,125,224,.36); }
 
 /* +1 bubble on Add to cart */
 .product-card .btn { position: relative; }
@@ -216,7 +335,7 @@ a{ color: inherit; text-decoration: none; }
 .btn.ghost{ background:#f1f1f6; color:#111; }
 .btn.primary{ background:#111; color:#fff; }
 
-/* ---------- Exercise blocks ---------- */
+/* ---------- Exercises ---------- */
 .exercises .inner{ max-width: none; margin: 0; }
 .ex-title{ font-size:22px; margin: 8px 0 14px; }
 .exercise-grid{
@@ -239,7 +358,7 @@ a{ color: inherit; text-decoration: none; }
 .ex-btn{ margin-top:10px; border:0; background:#111; color:#fff; padding:8px 10px; border-radius:10px; cursor:pointer; }
 .exercise-card:hover{ transform: translateY(-6px); box-shadow: 0 12px 22px rgba(0,0,0,.12); }
 .exercise-card.inspiredX{ border-color: rgba(106,90,205,.25) }
-.exercise-card.angryX{ border-color: rgba(255,90,95,.25) }
+.exercise-card.angryX{    border-color: rgba(255,90,95,.25) }
 
 /* Timers */
 .timer-ring{
@@ -252,7 +371,7 @@ a{ color: inherit; text-decoration: none; }
   margin: 10px 0 12px;
 }
 .timer-ring.inspired{ --ring-accent: var(--accent-inspired-2); }
-.timer-ring.angry{ --ring-accent: var(--accent-angry-2); }
+.timer-ring.angry{    --ring-accent: var(--accent-angry-2); }
 .timer-core{
   width: calc(var(--size) - 18px); height: calc(var(--size) - 18px);
   background: #fff; border-radius: 50%;
@@ -262,14 +381,14 @@ a{ color: inherit; text-decoration: none; }
 .timer-label{ font-size: 12px; color: #666; margin-top: 2px; }
 .timer-desc{ color:#555; font-size:14px; min-height:36px; }
 .timer-controls{ display:flex; gap:8px; margin-top:8px; }
-.ex-btn.ghost{ background:#f1f1f6; color:#111; }
-.ex-btn.subtle{ background:#fff; color:#111; border:1px solid #eee; }
+.ex-btn.ghost{   background:#f1f1f6; color:#111; }
+.ex-btn.subtle{  background:#fff;    color:#111; border:1px solid #eee; }
 
 @keyframes celebratePulse{ 0%{ box-shadow:0 0 0 0 rgba(255,204,0,.5);} 100%{ box-shadow:0 0 0 20px rgba(255,204,0,0);} }
 .exercise-card.timer.celebrate .timer-core{ animation: celebratePulse 1s ease 2; }
 
-/* ---------- sticky filter bar ---------- */
-.sticky-filters { position: sticky; top: 10px; z-index: 5; }
+/* ---------- Sticky filter bar ---------- */
+.sticky-filters { position: sticky; top: calc(var(--topbar-h) + env(safe-area-inset-top) + 8px); z-index: 5; }
 .filters{
   display: grid;
   grid-template-columns: 1fr auto;
@@ -314,6 +433,7 @@ a{ color: inherit; text-decoration: none; }
   box-shadow: 0 18px 44px rgba(0,0,0,.35);
   border-color: rgba(255,255,255,.2);
 }
+.product-card:focus-within{ outline: 2px solid rgba(255,255,255,.5); outline-offset: 2px; }
 
 /* ---------- animated ambient blobs (behind content) ---------- */
 .page.pretty::before,
@@ -325,9 +445,8 @@ a{ color: inherit; text-decoration: none; }
 }
 .page.inspired-page.pretty::before{ background: radial-gradient(closest-side, #8a2be2, transparent 70%); top: -10%; left: -8%; }
 .page.inspired-page.pretty::after { background: radial-gradient(closest-side, #6a5acd, transparent 70%); bottom: 10%; right: -6%; animation-delay: 3s; }
-
-.page.angry-page.pretty::before{ background: radial-gradient(closest-side, #ff8a5b, transparent 70%); top: -12%; left: -6%; }
-.page.angry-page.pretty::after { background: radial-gradient(closest-side, #ff5a5f, transparent 70%); bottom: 8%; right: -8%; animation-delay: 3s; }
+.page.angry-page.pretty::before{    background: radial-gradient(closest-side, #ff8a5b, transparent 70%); top: -12%; left: -6%; }
+.page.angry-page.pretty::after {    background: radial-gradient(closest-side, #ff5a5f, transparent 70%); bottom: 8%; right: -8%; animation-delay: 3s; }
 
 @keyframes blobFloat{
   0%{ transform: translate3d(-10px, -6px, 0) scale(1); }
@@ -348,11 +467,11 @@ a{ color: inherit; text-decoration: none; }
   .product-card img{ height: 210px; }
 }
 
-/* ---------- Route fade (optional) ---------- */
+/* ---------- Route fade ---------- */
 .route-fade{ animation: routeIn .28s ease; }
 @keyframes routeIn{ from{ opacity: 0; transform: translateY(6px) } to{ opacity: 1; transform: none } }
 
-/* ===== Floating Particles (final) ===== */
+/* ===== Floating Particles ===== */
 .particles{
   position: absolute; inset: 0;
   overflow: hidden; pointer-events: none; z-index: 0;
@@ -360,37 +479,38 @@ a{ color: inherit; text-decoration: none; }
 .particles .particle{
   position: absolute; border-radius: 999px;
   opacity: .7; mix-blend-mode: screen;
-  animation: floatY ease-in-out infinite, swayX ease-in-out infinite; /* default */
+  animation: floatY ease-in-out infinite, swayX ease-in-out infinite; /* default motion */
 }
-
 /* Inspired: soft glow */
 .particles.inspired .particle{
   background: radial-gradient(circle, rgba(181,134,255,.9), rgba(181,134,255,0) 70%);
 }
-
 /* Angry: ember drift (diagonal rise) */
 .particles.angry .particle{
   background: radial-gradient(circle, rgba(255,120,120,.95), rgba(255,120,120,0) 70%);
-  animation: emberDiag 14s linear infinite; /* override default */
+  animation: emberDiag 14s linear infinite;
   opacity: .9;
 }
+/* Happy: twinkle on top of float+sway */
+.particles.happy .particle{
+  background: radial-gradient(circle, rgba(255,240,160,.95), rgba(255,240,160,0) 70%);
+  animation: floatY ease-in-out infinite, swayX ease-in-out infinite, twinkle 2.4s ease-in-out infinite;
+}
+/* Sad: gentle downward drizzle */
+.particles.sad .particle{
+  background: radial-gradient(circle, rgba(150,190,255,.9), rgba(150,190,255,0) 70%);
+  animation: drizzleY 16s linear infinite;
+  opacity: .85;
+}
 
-/* motions */
-@keyframes floatY {
-  0%   { transform: translateY(10px); }
-  50%  { transform: translateY(-18px); }
-  100% { transform: translateY(10px); }
-}
-@keyframes swayX {
-  0%   { margin-left: -8px; }
-  50%  { margin-left: 8px; }
-  100% { margin-left: -8px; }
-}
-@keyframes emberDiag{
-  0%   { transform: translate(-8vw, 10vh) scale(1);    opacity: .95; }
-  60%  { transform: translate(12vw, -60vh) scale(.92); opacity: .5; }
-  100% { transform: translate(28vw, -140vh) scale(.85); opacity: .1; }
-}
+/* particle motions */
+@keyframes floatY { 0%{ transform: translateY(10px) } 50%{ transform: translateY(-18px) } 100%{ transform: translateY(10px) } }
+@keyframes swayX  { 0%{ margin-left: -8px } 50%{ margin-left: 8px } 100%{ margin-left: -8px } }
+@keyframes emberDiag{ 0%{ transform: translate(-8vw, 10vh) scale(1); opacity:.95 } 60%{ transform: translate(12vw, -60vh) scale(.92); opacity:.5 } 100%{ transform: translate(28vw, -140vh) scale(.85); opacity:.1 } }
+@keyframes twinkle{ 0%{ opacity:.6; transform: translateY(10px) } 50%{ opacity:1 } 100%{ opacity:.6; transform: translateY(10px) } }
+@keyframes drizzleY{ 0%{ transform: translateY(-20vh) } 100%{ transform: translateY(120vh) } }
+
+/* ---------- Toasts ---------- */
 .toast-wrap{
   position: fixed; right: 16px; bottom: 86px;
   display: grid; gap: 10px; z-index: 120;
@@ -405,7 +525,268 @@ a{ color: inherit; text-decoration: none; }
 }
 @keyframes toastIn{ from{ opacity:0; transform: translateY(6px) } to{ opacity:1; transform:none } }
 @keyframes toastOut{ to{ opacity:0; transform: translateY(6px) } }
+
+/* ---------- Motion reduction ---------- */
 @media (prefers-reduced-motion: reduce){
   *{ animation: none !important; transition: none !important; }
   .particles{ display: none !important; }
 }
+
+/* ---------- Home page ---------- */
+.page.home-page{
+  background:
+    radial-gradient(1400px 480px at 50% 0%, rgba(138,43,226,.22), rgba(138,43,226,0) 70%),
+    linear-gradient(180deg, rgba(106,90,205,.22) 0%, rgba(40,40,60,.16) 45%, rgba(10,10,14,.22) 100%);
+}
+.mood-hero.home{ background: linear-gradient(270deg, #8a2be2, #ff8a5b); }
+.home-cta{ margin-top: 16px; max-width: 240px; }
+.home-subtitle{ margin: 0 0 12px; font-size: 20px; opacity: .95; }
+
+/* Mood cards grid */
+.mood-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+  gap: 16px;
+}
+.mood-card{
+  position: relative;
+  display: grid; align-content: center; gap: 6px;
+  min-height: 120px; padding: 16px;
+  border-radius: 16px; color: #111; text-decoration: none;
+  border: 1px solid rgba(255,255,255,.12); background: #fff;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.mood-card:hover{ transform: translateY(-6px); box-shadow: 0 16px 34px rgba(0,0,0,.18); border-color: rgba(255,255,255,.22); }
+.mc-emoji{ font-size: 22px }
+.mc-title{ font-weight: 800; font-size: 18px }
+.mc-go{ font-size: 13px; color: #444 }
+
+/* Tint each mood card */
+.mood-card.inspired{ background: linear-gradient(135deg, #f4f0ff, #ede7ff); }
+.mood-card.angry{    background: linear-gradient(135deg, #ffe8e6, #ffd9d6); }
+.mood-card.happy{    background: linear-gradient(135deg, #fff8d9, #eefcdf); }
+.mood-card.sad{      background: linear-gradient(135deg, #e7efff, #dde7ff); }
+
+/* ---------- Empty-state hint chip ---------- */
+.empty-hint{
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  max-width: 720px;
+  font-size: 14px;
+}
+.empty-hint code{ background: rgba(0,0,0,.25); padding: 2px 6px; border-radius: 6px; }
+
+/* ======= HOME — Advanced Hero ======= */
+.home-hero{ perspective: 1000px; }
+.hero-tilt{
+  transform-style: preserve-3d;
+  transform:
+    rotateX(var(--rx, 0deg))
+    rotateY(var(--ry, 0deg));
+  transition: transform .2s cubic-bezier(.2,.6,.2,1);
+  will-change: transform;
+}
+.hero-glow{
+  position:absolute; inset:-20% -10% auto -10%;
+  height: 70%;
+  background:
+    radial-gradient(closest-side, rgba(255,255,255,.12), transparent 70%),
+    radial-gradient(600px 220px at 20% 20%, rgba(255,255,255,.12), transparent 70%);
+  filter: blur(40px);
+  z-index:0; pointer-events:none;
+  animation: glowDrift calc(18s * var(--home-intensity,1)) ease-in-out infinite alternate;
+}
+@keyframes glowDrift{
+  0%{ transform: translate3d(-12px,-8px,0) }
+  100%{ transform: translate3d(12px,10px,0) }
+}
+.home-title{
+  font-size: clamp(34px, 5.2vw, 64px);
+  font-weight: 900;
+  letter-spacing: .3px;
+  line-height: 1.0;
+  margin: 0 0 8px;
+  background: linear-gradient(90deg,#fff, #ffe1a1 40%, #fff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+}
+.home-title-accent{
+  background: linear-gradient(90deg,#ffb864,#ff7ee0 70%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.home-kicker{ max-width: 720px; opacity: .95 }
+
+.home-cta-row{ display:flex; align-items:center; gap: 14px; margin-top: 16px; }
+.home-cta{
+  position: relative; max-width: 260px;
+  overflow: hidden; isolation: isolate;
+}
+.home-cta .cta-shine{
+  content:""; position:absolute; inset:0; z-index: 0;
+  background: linear-gradient(120deg, transparent 0, rgba(255,255,255,.5) 30%, transparent 60%);
+  transform: translateX(-120%);
+  animation: shineSweep calc(2.6s * var(--home-intensity,1)) ease-in-out infinite;
+  mix-blend-mode: soft-light;
+}
+@keyframes shineSweep{
+  0%{ transform: translateX(-120%) }
+  60%{ transform: translateX(120%) }
+  100%{ transform: translateX(120%) }
+}
+
+/* Motion dial */
+.dial{
+  display:flex; align-items:center; gap:8px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  padding: 8px 10px; border-radius: 12px;
+}
+.dial label{ font-size: 12px; opacity: .9 }
+.dial input[type="range"]{ width: 160px; accent-color: #ffcc00; }
+
+/* ======= HOME — Mood Orbs ======= */
+.orb-grid{
+  display:grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr));
+  gap: 14px;
+}
+.orb{
+  position: relative; overflow: hidden;
+  display:flex; align-items:center; gap:10px;
+  padding: 14px 16px; min-height: 72px;
+  border-radius: 16px; color:#111; background:#fff;
+  border:1px solid rgba(255,255,255,.14);
+  transform: translateY(12px); opacity: 0;
+  transition: transform .35s ease, box-shadow .25s ease, border-color .25s ease, opacity .35s ease;
+}
+.reveal.in .orb{ transform: none; opacity: 1; }
+.orb:before{
+  content:""; position:absolute; inset:-30% -10% auto -10%; height: 150%;
+  background: radial-gradient(closest-side, rgba(255,255,255,.35), transparent 70%);
+  transform: translateY(10px);
+  animation: orbFloat calc(4s * var(--home-intensity,1)) ease-in-out infinite alternate;
+}
+@keyframes orbFloat{ to{ transform: translateY(-10px) } }
+.orb:hover{
+  box-shadow: 0 18px 44px rgba(0,0,0,.24);
+  border-color: rgba(255,255,255,.24);
+  transform: translateY(-4px);
+}
+.orb-emoji{ font-size: 24px; width: 28px; text-align:center; }
+.orb-label{ font-weight: 800; }
+
+/* tint per mood */
+.orb.inspired{ background: linear-gradient(135deg,#f6f0ff,#efe7ff); }
+.orb.angry{    background: linear-gradient(135deg,#ffe7e4,#ffd5cf); }
+.orb.happy{    background: linear-gradient(135deg,#fff7d9,#eefcdf); }
+.orb.sad{      background: linear-gradient(135deg,#e7efff,#dde7ff); }
+
+/* ======= HOME — Counters ======= */
+.counters{
+  display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:12px;
+  background: rgba(0,0,0,.45);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px; padding: 14px;
+  backdrop-filter: blur(6px);
+}
+.count{ text-align:center; padding: 10px; }
+.count .num{ font: 900 36px/1 Arial, sans-serif; }
+.count .lbl{ opacity: .85 }
+
+/* ======= HOME — Spotlight Slider ======= */
+.spotlight{ position: relative; }
+.spot-head{
+  display:flex; align-items:center; justify-content:space-between; margin-bottom: 8px;
+}
+.spot-controls{ display:flex; gap:8px; }
+.spot-btn{
+  width:34px; height:34px; border-radius:10px;
+  background: rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.12);
+  cursor:pointer;
+}
+.spot-viewport{
+  position: relative; overflow: hidden;
+}
+.spot-track{
+  display:flex; gap:16px; will-change: transform;
+  transition: transform calc(.6s * var(--home-intensity,1)) cubic-bezier(.22,.7,0,1);
+}
+.spot-cell{ flex: 0 0 min(320px, 70vw); }
+.spot-mask{
+  position:absolute; top:0; bottom:0; width:70px; pointer-events:none;
+  background: linear-gradient(90deg, var(--bg), transparent);
+}
+.spot-mask.right{ right:0; transform: scaleX(-1); }
+.spot-mask.left{ left:0; }
+
+/* ======= HOME — Reveals ======= */
+.reveal{ opacity: 0; transform: translateY(10px); transition: opacity .4s ease, transform .4s ease; }
+.reveal.in{ opacity: 1; transform: none; }
+/* Spotlight: make ProductCard visible outside product-grid */
+.spotlight .product-card{
+  opacity: 1;
+  transform: none;
+  animation: spotIn .38s ease both;
+}
+@keyframes spotIn{
+  from{ opacity: 0; transform: translateY(8px) }
+  to  { opacity: 1; transform: none }
+}
+
+/* Spotlight sizing + fill */
+.spot-cell{
+  flex: 0 0 var(--w, clamp(260px, 32vw, 360px));
+  display: flex;
+}
+.spot-cell > .product-card{ width: 100%; }
+
+/* Ensure the viewport isn’t collapsing while images load */
+.spot-viewport{ min-height: 260px; }
+
+/* CTA: gentle motion + shine only on hover/focus */
+.home-cta{
+  position: relative;
+  max-width: 260px;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform .18s cubic-bezier(.2,.6,.2,1), box-shadow .18s;
+  will-change: transform;
+}
+.home-cta .cta-shine{
+  content:"";
+  position:absolute; inset:0; z-index:0;
+  background: linear-gradient(120deg, transparent 0, rgba(255,255,255,.45) 30%, transparent 60%);
+  transform: translateX(-120%);
+  animation: shineSweep calc(3.2s * var(--home-intensity,1)) ease-in-out infinite;
+  animation-play-state: paused;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+.home-cta:hover .cta-shine,
+.home-cta:focus-visible .cta-shine{
+  animation-play-state: running;
+}
+@keyframes shineSweep{
+  0%   { transform: translateX(-120%) }
+  65%  { transform: translateX(120%) }
+  100% { transform: translateX(120%) }
+}
+
+/* --- Make ANGRY particles visible on red backgrounds --- */
+.particles.angry .particle{
+  background: radial-gradient(circle, rgba(255,238,180,.95), rgba(255,238,180,0) 70%);
+  mix-blend-mode: normal;
+  opacity: .95;
+  box-shadow: 0 0 18px rgba(255,180,80,.35);
+}
+@supports (mix-blend-mode: plus-lighter) {
+  .particles.angry .particle{ mix-blend-mode: plus-lighter; }
+}
+
+/* Optional visual variants */
+.toast.success { border-color: #2ecc71; }
+.toast.error   { border-color: #e74c3c; }
+.toast.warning { border-color: #f1c40f; }

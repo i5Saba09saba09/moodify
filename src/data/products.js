@@ -215,5 +215,118 @@ export const PRODUCTS = [
     reviews: 88,
     category: "Audio",
   },
+
+  /* -------------------------
+     NEW: Happy (curated)
+     ------------------------- */
+  {
+    id: 17,
+    mood: "happy",
+    name: "Sunshine Lamp",
+    price: 34.0,
+    image:
+      "https://images.unsplash.com/photo-1517705008128-361805f42e86?q=80&w=1600&auto=format&fit=crop",
+    tagline: "Bring a little dawn indoors.",
+    tags: ["light", "mood"],
+    rating: 4.5,
+    reviews: 210,
+    category: "Wellness",
+  },
+  {
+    id: 18,
+    mood: "happy",
+    name: "Confetti Sticky Notes",
+    price: 6.99,
+    image:
+      "https://images.unsplash.com/photo-1472851294608-062f824d29cc?q=80&w=1600&auto=format&fit=crop",
+    tagline: "Tiny celebrations for your to-dos.",
+    tags: ["stationery", "color"],
+    rating: 4.3,
+    reviews: 152,
+    category: "Stationery",
+  },
+  {
+    id: 19,
+    mood: "happy",
+    name: "Pocket Party Speaker",
+    price: 29.0,
+    image:
+      "https://images.unsplash.com/photo-1484704849700-f032a568e944?q=80&w=1600&auto=format&fit=crop",
+    tagline: "One song, instant mood lift.",
+    tags: ["audio", "music"],
+    rating: 4.4,
+    reviews: 174,
+    category: "Audio",
+  },
+  {
+    id: 20,
+    mood: "happy",
+    name: "Color Pop Gel Pens",
+    price: 9.5,
+    image:
+      "https://images.unsplash.com/photo-1473186505569-9c61870c11f9?q=80&w=1600&auto=format&fit=crop",
+    tagline: "Write in neon joy.",
+    tags: ["art", "stationery"],
+    rating: 4.6,
+    reviews: 230,
+    category: "Stationery",
+  },
+
+  /* -------------------------
+     NEW: Sad (curated)
+     ------------------------- */
+  {
+    id: 21,
+    mood: "sad",
+    name: "Weighted Blanket Throw",
+    price: 49.0,
+    image:
+      "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1600&auto=format&fit=crop",
+    tagline: "A calm hug while you rest.",
+    tags: ["cozy", "comfort"],
+    rating: 4.5,
+    reviews: 318,
+    category: "Wellness",
+  },
+  {
+    id: 22,
+    mood: "sad",
+    name: "Herbal Sleep Tea",
+    price: 12.0,
+    image:
+      "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=1600&auto=format&fit=crop",
+    tagline: "Warm cup, softer evening.",
+    tags: ["tea", "soothe"],
+    rating: 4.2,
+    reviews: 199,
+    category: "Wellness",
+  },
+  {
+    id: 23,
+    mood: "sad",
+    name: "Rain Sounds Speaker",
+    price: 24.0,
+    image:
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1600&auto=format&fit=crop",
+    tagline: "Gentle noise for gentle nights.",
+    tags: ["audio", "sleep"],
+    rating: 4.1,
+    reviews: 167,
+    category: "Audio",
+  },
+  {
+    id: 24,
+    mood: "sad",
+    name: "Soft Knit Socks (2-pack)",
+    price: 14.0,
+    image:
+      "https://images.unsplash.com/photo-1582582429416-67f2e1f50b36?q=80&w=1600&auto=format&fit=crop",
+    tagline: "Cozy feet, kinder day.",
+    tags: ["cozy", "comfort"],
+    rating: 4.3,
+    reviews: 143,
+    category: "Wellness",
+  },
 ];
+
 export default PRODUCTS;
