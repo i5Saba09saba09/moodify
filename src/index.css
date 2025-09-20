@@ -1,5 +1,2 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f8f8f8;
-}
+/* Intentionally minimal — theming handled in App.css */
+body { margin: 0; font-family: Arial, sans-serif; }

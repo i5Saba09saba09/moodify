@@ -1,20 +1,21 @@
-// src/pages/Inspired.jsx
+// src/pages/Happy.jsx
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import ProductCard from "../components/ProductCard";
 import ExerciseTimer from "../components/ExerciseTimer";
 import Particles from "../components/Particles";
 import defaultProducts, { PRODUCTS as NAMED } from "../data/products";
 
-const INSPIRED_EXERCISES = [
-  { id: "sketch-10", emoji: "✏️", title: "10-min Sketch", desc: "Pick an object nearby and sketch fast.", mins: 10 },
-  { id: "ideas-7",  emoji: "💡", title: "5 Ideas Sprint", desc: "Write 5 wild ideas — no judging.", mins: 7 },
-  { id: "mood-12",  emoji: "🎛️", title: "Moodboard Mix", desc: "Save 6 images for a theme.", mins: 12 },
-  { id: "walk-8",   emoji: "🚶", title: "Think Walk",     desc: "Walk & voice-note three insights.", mins: 8 },
+const HAPPY_EXERCISES = [
+  { id: "grat-5",  emoji: "📝", title: "3 Gratitudes",  desc: "Write 3 oddly-specific gratitudes.", mins: 5 },
+  { id: "smile-3", emoji: "😊", title: "Smile Set",     desc: "Hold a gentle smile, breathe 4-4.",  mins: 3 },
+  { id: "dance-6", emoji: "💃", title: "Micro-Dance",   desc: "1 song, goofy moves, no judging.",   mins: 6 },
+  { id: "ping-7",  emoji: "📨", title: "Kind Ping",     desc: "Send 1 kind text to someone.",       mins: 7 },
 ];
 
-export default function Inspired() {
+export default function Happy() {
   const all = Array.isArray(NAMED) ? NAMED : Array.isArray(defaultProducts) ? defaultProducts : [];
-  const base = all.filter((p) => p.mood === "inspired");
+  const moodBase = all.filter((p) => p.mood === "happy");
+  const source = moodBase.length > 0 ? moodBase : all; // fallback so page isn't empty
 
   const [q, setQ] = useState("");
   const [qDeb, setQDeb] = useState("");
@@ -27,19 +28,19 @@ export default function Inspired() {
     return () => clearTimeout(id);
   }, [q]);
 
-  // categories with counts, ordered by frequency
+  // category counts + ordered list
   const { categories, counts } = useMemo(() => {
-    const cnt = base.reduce((m, p) => {
+    const cnt = source.reduce((m, p) => {
       const k = p.category || "Other";
       m[k] = (m[k] || 0) + 1;
       return m;
     }, {});
     const cats = Object.keys(cnt).sort((a, b) => (cnt[b] || 0) - (cnt[a] || 0));
     return { categories: ["all", ...cats], counts: cnt };
-  }, [base]);
+  }, [source]);
 
   const items = useMemo(() => {
-    let list = [...base];
+    let list = [...source];
 
     if (chip !== "all") list = list.filter((p) => (p.category || "Other") === chip);
 
@@ -60,11 +61,11 @@ export default function Inspired() {
       default:           list.sort((a, b) => (b.reviews ?? 0) - (a.reviews ?? 0)); // popular
     }
     return list;
-  }, [base, qDeb, sort, chip]);
+  }, [source, qDeb, sort, chip]);
 
   const results = items.length;
 
-  // SR-only live region
+  // SR-only utility
   const srOnly = {
     position: "absolute",
     width: "1px",
@@ -76,6 +77,8 @@ export default function Inspired() {
     whiteSpace: "nowrap",
     border: 0,
   };
+
+  // announce result count
   const liveRef = useRef(null);
   useEffect(() => {
     if (liveRef.current) {
@@ -91,25 +94,34 @@ export default function Inspired() {
   }
 
   return (
-    <div className="page inspired-page pretty">
-      <header className="mood-hero inspired">
-        <Particles variant="inspired" count={26} speed={1.0} parallax />
+    <div className="page happy-page pretty">
+      <header className="mood-hero happy">
+        <Particles variant="happy" count={26} speed={1.0} parallax />
         <div className="inner">
-          <h1>✨ Inspired</h1>
-          <p>Fuel your creativity and momentum with our curated picks.</p>
+          <h1>😊 Happy</h1>
+          <p>Keep the good vibes rolling with upbeat picks and tiny joy breaks.</p>
         </div>
       </header>
+
+      {moodBase.length === 0 && (
+        <div className="section-wide">
+          <div className="empty-hint">
+            Showing general picks — add products with <code>mood: "happy"</code> in <code>data/products.js</code> to curate this page.
+          </div>
+        </div>
+      )}
 
       {/* Sticky filters */}
       <div className="section-wide sticky-filters">
         <div className="filters" role="region" aria-label="Filters">
           <input
             className="filter-input"
-            placeholder="Search creative gear..."
+            placeholder="Search feel-good gear…"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             aria-label="Search products"
           />
+
           <select
             className="filter-select"
             value={sort}
@@ -125,7 +137,7 @@ export default function Inspired() {
           <div className="chips" role="listbox" aria-label="Filter by category">
             {categories.map((c) => {
               const isAll = c === "all";
-              const count = isAll ? base.length : counts[c] || 0;
+              const count = isAll ? source.length : counts[c] || 0;
               const active = chip === c;
               return (
                 <button
@@ -171,9 +183,9 @@ export default function Inspired() {
 
       <section className="section-wide exercises">
         <div className="inner">
-          <h2 className="ex-title">Quick Creative Exercises</h2>
+          <h2 className="ex-title">Little Joy Boosts</h2>
           <div className="exercise-grid">
-            {INSPIRED_EXERCISES.map((x) => (
+            {HAPPY_EXERCISES.map((x) => (
               <ExerciseTimer key={x.id} {...x} accent="inspired" />
             ))}
           </div>

@@ -214,19 +214,6 @@ export const PRODUCTS = [
     reviews: 88,
     category: "Audio",
   },
-   //  Inspired extras
-  {
-    id: 17,
-    mood: "inspired",
-    name: "Authentic Hogwarts Journal",
-    price: "2$",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2CSq6wcBX4JFPJdKZ--CwKmFl-QI8npUCIQ&s",
-    tagline: "Put a spell on em",
-    tags: ["Spells", "Magic"],
-    rating: 4.6,
-    reviews: 142,
-    category: "Dark Art",
-  },
 ];
+
 export default PRODUCTS;
