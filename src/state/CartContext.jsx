@@ -1,4 +1,8 @@
 // src/state/CartContext.jsx
+////This CartContext.jsx file implements 
+// a comprehensive shopping cart state 
+// management system 
+// using React's Context API and useReducer hook.
 import React, { createContext, useContext, useMemo, useReducer, useEffect } from "react";
 
 const CartCtx = createContext(null);

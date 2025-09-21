@@ -1,13 +1,19 @@
-// src/pages/Home.jsx
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { NavLink } from "react-router-dom";
+import Login from '../components/Login';
 import Particles from "../components/Particles";
 import ProductCard from "../components/ProductCard";
 import { MOODS } from "../moods";
 import products, { PRODUCTS as NAMED } from "../data/products";
 
 export default function Home() {
-  const all = Array.isArray(NAMED) ? NAMED : Array.isArray(products) ? products : [];
+  // Wrap 'all' in useMemo to prevent recreation on every render
+  const all = useMemo(() => {
+    return Array.isArray(NAMED) ? NAMED : Array.isArray(products) ? products : [];
+  }, []);
+
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
 
   // Trending: most reviewed
   const trending = useMemo(() => {
@@ -150,6 +156,15 @@ export default function Home() {
   const slideCount = trending.length;
   const spotRef = useRef(null);
 
+  // Use useCallback to memoize these functions for useEffect dependencies
+  const prev = useCallback(() => {
+    setIdx((i) => (i - 1 + slideCount) % slideCount);
+  }, [slideCount]);
+
+  const next = useCallback(() => {
+    setIdx((i) => (i + 1) % slideCount);
+  }, [slideCount]);
+
   useEffect(() => {
     if (paused || slideCount <= 1 || prefersReduced) return;
     let id = setInterval(() => setIdx((i) => (i + 1) % slideCount), 2600);
@@ -169,14 +184,7 @@ export default function Home() {
     };
   }, [paused, slideCount, prefersReduced]);
 
-  function prev() {
-    setIdx((i) => (i - 1 + slideCount) % slideCount);
-  }
-  function next() {
-    setIdx((i) => (i + 1) % slideCount);
-  }
-
-  // keyboard support on spotlight
+  // keyboard support on spotlight - now includes proper dependencies
   useEffect(() => {
     const el = spotRef.current;
     if (!el) return;
@@ -186,7 +194,7 @@ export default function Home() {
     }
     el.addEventListener("keydown", onKey);
     return () => el.removeEventListener("keydown", onKey);
-  }, [slideCount]);
+  }, [next, prev]);
 
   // ===== Motion dial (CSS variables) =====
   const [intensity, setIntensity] = useState(1); // 0.6..1.4 looks good
@@ -200,6 +208,13 @@ export default function Home() {
       className="page home-page pretty"
       style={{ "--home-tilt": 8, "--home-intensity": intensity }}
     >
+      {/* Add login and register buttons */}
+      <button onClick={() => setShowLogin(true)}>SignIn</button><br></br>
+      <button onClick={() => setShowRegister(true)}>SignUp</button>
+      {showLogin && <Login toggle={() => setShowLogin(false)} />}
+      {showRegister && <Login toggle={() => setShowRegister(false)} register />}
+
+      {/* Hero */}
       <header ref={heroRef} className="mood-hero home home-hero">
         <Particles variant="inspired" count={36} />
         <div className="hero-tilt">
@@ -223,7 +238,7 @@ export default function Home() {
               </NavLink>
 
               <div className="dial">
-                <label htmlFor="motion">Motion</label>
+                <label htmlFor="motion">intensity bar</label>
                 <input
                   id="motion"
                   type="range"
@@ -239,21 +254,6 @@ export default function Home() {
           </div>
         </div>
       </header>
-
-      {/* Mood orbs */}
-      <section className="section-wide reveal">
-        <h2 className="home-subtitle">Choose your mood</h2>
-        <div className="orb-grid">
-          {MOODS.map((m, i) => (
-            <NavLink key={m.slug} to={`/${m.slug}`} className={`orb ${m.slug}`} style={{ "--i": i }}>
-              <span className="orb-emoji" aria-hidden="true">
-                {m.emoji || "🙂"}
-              </span>
-              <span className="orb-label">{m.label}</span>
-            </NavLink>
-          ))}
-        </div>
-      </section>
 
       {/* Counters */}
       <section className="section-wide reveal">
