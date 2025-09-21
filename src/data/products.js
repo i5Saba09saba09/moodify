@@ -1,4 +1,11 @@
 // src/data/products.js
+//This products.js file serves as a comprehensive data
+//  source for a mood-based e-commerce application
+//  called "Moodify Lab." The file exports a constant
+//  array called PRODUCTS that contains 29 different 
+// product objects,
+//  each designed to cater to specific 
+// emotional states and user needs.
 export const PRODUCTS = [
   // Inspired
   {
@@ -53,7 +60,6 @@ export const PRODUCTS = [
   reviews: 201,
   category: "Art",
 },
-
 {
   id: 5,
     mood: "angry",
@@ -106,7 +112,6 @@ export const PRODUCTS = [
     reviews: 266,
     category: "Wellness",
   },
-
   // Inspired extras
   {
     id: 9,
@@ -160,7 +165,6 @@ export const PRODUCTS = [
     reviews: 167,
     category: "Art",
   },
-
   // Angry extras
   {
     id: 13,
@@ -386,5 +390,4 @@ export const PRODUCTS = [
   },
   
 ];
-
 export default PRODUCTS;
