@@ -13,7 +13,6 @@
   --accent-inspired-2: #8a2be2;
   --accent-angry-1: #ff0000;
   --accent-angry-2: #e2551d;
-  /* new: happy & sad accents */
   --accent-happy-1: #ffd24b;
   --accent-happy-2: #78d478;
   --accent-sad-1:   #4e7de0;
@@ -46,7 +45,8 @@ a{ color: inherit; text-decoration: none; }
   position: sticky; top: 0; z-index: 100;
   background: rgba(0,0,0,.55);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255,255,255,.08);
+  /* remove the faint divider line entirely */
+  border-bottom: none;
 }
 .top-inner{
   height: var(--topbar-h);
@@ -66,24 +66,44 @@ a{ color: inherit; text-decoration: none; }
 .logo-mark{ font-size: 18px; }
 .logo-text{ line-height: 1; }
 /* nav row */
-.nav-links{
-  display: flex; align-items: center; gap: 8px;
+/* Auth links in top bar */
+.nav-links{ flex: 1; } /* lets nav take center and scroll; pushes auth to the right */
 
-  /* FIX: only horizontal scroll, never show a bar */
-  overflow-x: auto;
-  overflow-y: hidden;
-
-  /* hide scrollbar in Firefox */
-  scrollbar-width: none;
-
-  /* hide scrollbar in old Edge/IE */
-  -ms-overflow-style: none;
-
-  /* keep masks for edge fade */
-  mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+.auth-links{
+  display:flex; gap:8px; align-items:center;
+  flex:0 0 auto;
 }
+
+.auth-link{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:36px; padding:0 12px; border-radius:10px;
+  font-weight:800; letter-spacing:.2px; white-space:nowrap;
+  border:1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.06);
+  color:#fff; text-decoration:none;
+  transition:transform .15s ease, background .2s ease, border-color .2s ease;
+}
+.auth-link:hover{ transform:translateY(-1px); background:rgba(255,255,255,.10); }
+
+/* outline = Sign in, gradient = Sign up */
+.auth-link.ghost{
+  background: rgba(255,255,255,.04);
+  color:#e9e9ef;
+}
+.auth-link.cta{
+  background: linear-gradient(135deg, #8a2be2, #ff8a5b);
+  border-color: transparent;
+  box-shadow: 0 6px 18px rgba(0,0,0,.28);
+  color:#fff;
+}
+.auth-link.cta:hover{ box-shadow: 0 10px 26px rgba(0,0,0,.36); }
+
+/* tiniest screens: keep them compact */
+@media (max-width: 420px){
+  .auth-link{ height:32px; padding:0 10px; font-weight:700; }
+}
+
 /* hide scrollbar in WebKit (Chrome/Safari/Edge) */
-/* FIX: zero-size + transparent to fully remove the line */
 .nav-links::-webkit-scrollbar{ height: 0; width: 0; background: transparent; }
 .nav-links::-webkit-scrollbar-thumb{ background: transparent; }
 .nav-links::-webkit-scrollbar-track{ background: transparent; }
@@ -99,9 +119,7 @@ a{ color: inherit; text-decoration: none; }
   border: 1px solid rgba(255,255,255,.10);
   transition: transform .15s ease, background .2s ease, border-color .2s ease, color .2s ease;
   white-space: nowrap;
-
-  /* FIX: bullets/underlines cannot sneak in */
-  text-decoration: none !important;
+  text-decoration: none !important; /* bullets/underlines cannot sneak in */
 }
 .nav-link:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); }
 .nav-link:focus-visible{ outline: 2px solid #ffcc00; outline-offset: 2px; }
@@ -239,9 +257,10 @@ a{ color: inherit; text-decoration: none; }
   /* stylelint-disable-next-line property-no-vendor-prefix */
   -webkit-line-clamp: 2;
 
-  overflow: hidden;                 /* required for clamping */
-  min-height: calc(1.25em * 2);     /* keeps card heights aligned */
+  overflow: hidden;
+  min-height: calc(1.25em * 2);
 }
+
 .pill-row{
   display: flex;
   gap: 6px;
@@ -414,6 +433,13 @@ a{ color: inherit; text-decoration: none; }
 .filter-input, .filter-select{
   height: 40px; border-radius: 10px; border: 1px solid rgba(255,255,255,.18);
   background: rgba(255,255,255,.08); color: #fff; padding: 0 12px; outline: none;
+}
+/* add a search icon inside input */
+.filter-input{
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>");
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  padding-left: 36px;
 }
 .filter-input::placeholder{ color:#bbb; }
 .chips{ grid-column: 1 / -1; display:flex; flex-wrap:wrap; gap:8px; }
@@ -820,7 +846,7 @@ a{ color: inherit; text-decoration: none; }
   .form-panel .fields, .form-panel .fields.three{ grid-template-columns: 1fr; }
 }
 .field{ display:flex; flex-direction:column; gap:6px; }
-.field span{ font-size:12px; opacity:.9 }
+.field span{ font-size:12px; opacity:.9; margin-right: 10px; }
 .field input{
   height: 40px; border-radius:10px; border:1px solid rgba(255,255,255,.18);
   background: rgba(255,255,255,.08); color:#fff; padding:0 12px; outline:none;
@@ -852,3 +878,90 @@ a{ color: inherit; text-decoration: none; }
 .totals{ display:grid; gap:6px; }
 .totals .row{ display:flex; justify-content:space-between; }
 .totals .row.grand{ border-top:1px solid rgba(255,255,255,.12); padding-top:8px; font-size:18px; }
+
+/* ===== Auth (Signup) — helpers ===== */
+.auth-grid{
+  display: grid;
+  grid-template-columns: minmax(320px, 1.1fr) minmax(260px, .9fr);
+  gap: 16px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+@media (max-width: 980px){ .auth-grid{ grid-template-columns: 1fr; } }
+.field-error{ color: #ffcc00; font-size: 12px; }
+.agree-row{ display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.agree-row input{ width: 16px; height: 16px; }
+.pw-wrap{ position: relative; }
+.pw-wrap input{ width: 100%; padding-right: 42px; }
+.pw-toggle{
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.08);
+  color: #fff; width: 34px; height: 30px; border-radius: 8px; cursor: pointer;
+}
+.perk-list{ margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.perks .note{ margin-top: 10px; font-size: 13px; color: var(--muted); }
+
+/* ===== Mobile polish ===== */
+@media (max-width: 680px){
+  /* tighter hero + smaller title */
+  .mood-hero{ padding: 64px 16px 32px; }
+  .mood-hero h1{ font-size: 34px; }
+  .nav-label{ display: none; } /* keep emojis for space */
+}
+
+/* Compact search: on phones the search input collapses to an icon and expands on focus */
+@media (max-width: 560px){
+  .filters{
+    grid-template-columns: auto auto;
+    gap: 10px;
+  }
+  .filter-input{
+    width: 44px;
+    padding-left: 36px;
+    transition: width .25s ease, background-color .25s ease;
+    cursor: text;
+  }
+  .filter-input::placeholder{ opacity: 0; }
+
+  /* expand when the filters region is focused (tap into input) */
+  .filters:focus-within .filter-input{
+    width: 100%;
+  }
+
+  /* make select a bit slimmer */
+  .filter-select{ min-width: 120px; }
+  .section-wide .product-grid{ grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 16px; }
+  .product-card img{ height: 160px; }
+}
+
+.auth-user{ display:flex; align-items:center; gap:8px; }
+.auth-user .avatar{
+  width:28px; height:28px; border-radius:999px; display:grid; place-items:center;
+  font: 800 12px/1 Arial, sans-serif; color:#fff;
+  background: linear-gradient(135deg, #8a2be2, #ff8a5b);
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+}
+
+/* right side container so spacing is consistent */
+.auth-side{ display:flex; align-items:center; gap:10px; }
+
+/* when logged in */
+.user-menu{ display:flex; align-items:center; gap:10px; }
+.user-pill{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:0 10px; height:36px; border-radius:999px;
+  background: rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.16);
+  font-weight:800;
+}
+.user-pill .avatar{
+  width:24px; height:24px; border-radius:999px; background:#fff; color:#111;
+  display:grid; place-items:center; font-weight:900; font-size:12px;
+}
+.user-pill .name{ white-space:nowrap; }
+
+/* nicer spacing for field errors (Signup) */
+.field .field-error{ display:block; margin-top:6px; color:#ffb4b4; }
+label.field > span{ margin-bottom:4px; }
+
