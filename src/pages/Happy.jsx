@@ -21,6 +21,7 @@ export default function Happy() {
   const [qDeb, setQDeb] = useState("");
   const [sort, setSort] = useState("popular");
   const [chip, setChip] = useState("all");
+  
 
   // debounce search
   useEffect(() => {

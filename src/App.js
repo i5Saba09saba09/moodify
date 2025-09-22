@@ -9,6 +9,7 @@ import {
   useParams,
   useLocation,
   useNavigate,
+  Link,
 } from "react-router-dom";
 import { MOODS } from "./moods";
 import CartDrawer from "./components/CartDrawer";
@@ -16,10 +17,39 @@ import { CartProvider, useCart } from "./state/CartContext";
 import ToastPortal from "./components/ToastPortal";
 import Home from "./pages/Home";
 import "./App.css";
+import Checkout from "./pages/Checkout";
+import Success from "./pages/Success";
+import Signup from "./pages/Signup";
+import Signin from "./pages/Signin";
+import { AuthProvider, useAuth } from "./state/AuthContext";
 
 /* ---------------------------
    Small helpers
 --------------------------- */
+function AuthArea() {
+  const { user, signOut } = useAuth();
+  if (!user) {
+    return (
+      <div className="auth-links">
+        <NavLink to="/signin" className="auth-link ghost">Sign in</NavLink>
+        <NavLink to="/signup" className="auth-link cta">Sign up</NavLink>
+      </div>
+    );
+  }
+  const initial = (user.first?.[0] || user.email?.[0] || "?").toUpperCase();
+  return (
+    <div className="user-menu">
+      <div className="user-pill" title={user.email}>
+        <span className="avatar">{initial}</span>
+        <span className="name">Hey, {user.first || "friend"}</span>
+      </div>
+      <button type="button" className="auth-link ghost" onClick={signOut}>
+        Sign out
+      </button>
+    </div>
+  );
+}
+
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
@@ -52,7 +82,6 @@ function RouteProgress() {
   const [show, setShow] = useState(false);
   const timers = useRef([]);
 
-  // clear timers
   function clearTimers() {
     timers.current.forEach((t) => clearTimeout(t));
     timers.current = [];
@@ -60,15 +89,13 @@ function RouteProgress() {
 
   useEffect(() => {
     clearTimers();
-    if (reduced) return; // respect motion prefs
+    if (reduced) return;
 
     setShow(true);
     setP(0.08);
-    // ramp up a bit while route/suspense resolves
     timers.current.push(setTimeout(() => setP(0.35), 80));
     timers.current.push(setTimeout(() => setP(0.6), 180));
     timers.current.push(setTimeout(() => setP(0.85), 320));
-    // finish shortly after
     timers.current.push(
       setTimeout(() => {
         setP(1);
@@ -85,7 +112,6 @@ function RouteProgress() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.key, reduced]);
 
-  // style lives here so you don't have to touch CSS file
   return (
     <>
       <style>{`
@@ -101,17 +127,14 @@ function RouteProgress() {
       `}</style>
       <div
         className="route-progress"
-        style={{
-          "--p": p,
-          "--o": show ? 1 : 0,
-        }}
+        style={{ "--p": p, "--o": show ? 1 : 0 }}
       />
     </>
   );
 }
 
 /* ---------------------------
-   Active nav underline slider
+   Active nav underline slider (kept available but not used)
 --------------------------- */
 function NavUnderline({ navRef }) {
   const location = useLocation();
@@ -142,8 +165,7 @@ function NavUnderline({ navRef }) {
     const ro = new ResizeObserver(() => update());
     ro.observe(nav);
     window.addEventListener("resize", update);
-    const id = setInterval(update, 250); // catch async font/layout shifts
-
+    const id = setInterval(update, 250);
     return () => {
       ro.disconnect();
       window.removeEventListener("resize", update);
@@ -178,7 +200,6 @@ function GlobalEnhancements() {
   const { toggleCart, closeCart } = useCart();
   const navigate = useNavigate();
 
-  // Online/offline toasts
   useEffect(() => {
     function onOnline() {
       window.dispatchEvent(
@@ -202,7 +223,6 @@ function GlobalEnhancements() {
     };
   }, []);
 
-  // Keyboard shortcuts
   useEffect(() => {
     let gMode = false;
     function help() {
@@ -221,14 +241,11 @@ function GlobalEnhancements() {
       const el = document.activeElement;
       if (isTypingInto(el)) return;
 
-      // help
       if (e.key === "?" || (e.key === "/" && e.shiftKey)) {
         e.preventDefault();
         help();
         return;
       }
-
-      // cart
       if (e.key.toLowerCase() === "c") {
         e.preventDefault();
         toggleCart();
@@ -238,8 +255,6 @@ function GlobalEnhancements() {
         closeCart();
         return;
       }
-
-      // go-to (press 'g' then a letter)
       if (!gMode && e.key.toLowerCase() === "g") {
         gMode = true;
         window.setTimeout(() => (gMode = false), 1200);
@@ -252,13 +267,7 @@ function GlobalEnhancements() {
           navigate("/");
           return;
         }
-        const map = {
-          i: "inspired",
-          a: "angry",
-          s: "sad",
-          y: "happy", // y = happY :)
-          // also allow h to mean happy when g h isn't taken by home
-        };
+        const map = { i: "inspired", a: "angry", s: "sad", y: "happy" };
         const slug = map[k] || (k === "h" ? "happy" : null);
         if (slug) navigate(`/${slug}`);
       }
@@ -287,7 +296,6 @@ function ScrollAndTitle() {
   useEffect(() => {
     document.title = pageTitle;
     const behavior = reduced ? "auto" : "smooth";
-    // small delay to wait for route layout to paint
     const id = setTimeout(() => {
       try {
         window.scrollTo({ top: 0, left: 0, behavior });
@@ -389,68 +397,84 @@ export default function App() {
   const navRef = useRef(null);
 
   return (
-    <CartProvider>
-      <BrowserRouter>
-        {/* a11y: skip to content */}
-        <style>{`
-          .skip-nav{
-            position:fixed; left:8px; top:-40px; padding:8px 10px;
-            background:#111; color:#fff; border:1px solid #333; border-radius:8px;
-            z-index:999; transition: top .2s ease;
-          }
-          .skip-nav:focus{ top:8px; }
-        `}</style>
-        <a className="skip-nav" href="#main">Skip to content</a>
+    <AuthProvider>
+      <CartProvider>
+        <BrowserRouter>
+          {/* a11y: skip to content */}
+          <style>{`
+            .skip-nav{
+              position:fixed; left:8px; top:-40px; padding:8px 10px;
+              background:#111; color:#fff; border:1px solid #333; border-radius:8px;
+              z-index:999; transition: top .2s ease;
+            }
+            .skip-nav:focus{ top:8px; }
+          `}</style>
+          <a className="skip-nav" href="#main">Skip to content</a>
 
-        {/* Top progress bar */}
-        <RouteProgress />
+          {/* Top progress bar */}
+          <RouteProgress />
 
-        {/* Header */}
-        <header className="site-top">
-          <div className="top-inner">
-            <NavLink to="/" className="logo">
-              <span className="logo-mark">✨</span>
-              <span className="logo-text">Moodify</span>
-            </NavLink>
+          {/* Header */}
+          <header className="site-top">
+            <div className="top-inner">
+              {/* logo */}
+              <Link to="/" className="logo">
+                <span className="logo-mark">💫</span>
+                <span className="logo-text">Moodify</span>
+              </Link>
 
-            <nav ref={navRef} className="nav-links" aria-label="Primary">
-              <NavLink to="/" end className="nav-link">
-                Home
-              </NavLink>
-              {MOODS.map((m) => (
-                <NavLink key={m.slug} to={`/${m.slug}`} className="nav-link">
-                  <span className="nav-emoji" aria-hidden="true">
-                    {m.emoji}
-                  </span>
-                  <span className="nav-label">{m.label}</span>
+              {/* nav */}
+              <nav className="nav-links" ref={navRef}>
+                <NavLink to="/inspired" className="nav-link">
+                  <span className="nav-emoji">✨</span>
+                  <span className="nav-label">Inspired</span>
                 </NavLink>
-              ))}
-              {/* sliding underline */}
-              <NavUnderline navRef={navRef} />
-            </nav>
-          </div>
-        </header>
+                <NavLink to="/angry" className="nav-link">
+                  <span className="nav-emoji">🔥</span>
+                  <span className="nav-label">Angry</span>
+                </NavLink>
+                <NavLink to="/happy" className="nav-link">
+                  <span className="nav-emoji">😊</span>
+                  <span className="nav-label">Happy</span>
+                </NavLink>
+                <NavLink to="/sad" className="nav-link">
+                  <span className="nav-emoji">💧</span>
+                  <span className="nav-label">Sad</span>
+                </NavLink>
+                {/* If you want the animated underline back, render:
+                   <NavUnderline navRef={navRef} /> */}
+              </nav>
 
-        {/* Page chrome */}
-        <RouteFade>
-          <Suspense fallback={<div className="page"><p style={{padding:16}}>Loading…</p></div>}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/:slug" element={<MoodRoute />} />
-              {/* fallback to first mood for unknown */}
-              <Route path="*" element={<Navigate to={`/${first}`} />} />
-            </Routes>
-          </Suspense>
-        </RouteFade>
+              {/* auth area (pills or user) */}
+              <AuthArea />
+            </div>
+          </header>
 
-        {/* global enhancers */}
-        <ScrollAndTitle />
-        <GlobalEnhancements />
-        <CartDrawer />
-        <CartFab />
-        <CartAdapter />
-        <ToastPortal />
-      </BrowserRouter>
-    </CartProvider>
+          {/* Page chrome */}
+          <RouteFade>
+            <Suspense fallback={<div className="page"><p style={{padding:16}}>Loading…</p></div>}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/:slug" element={<MoodRoute />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/success" element={<Success />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/signin" element={<Signin />} />
+                {/* fallback to first mood for unknown */}
+                <Route path="*" element={<Navigate to={`/${first}`} />} />
+              </Routes>
+            </Suspense>
+          </RouteFade>
+
+          {/* global enhancers */}
+          <ScrollAndTitle />
+          <GlobalEnhancements />
+          <CartDrawer />
+          <CartFab />
+          <CartAdapter />
+          <ToastPortal />
+        </BrowserRouter>
+      </CartProvider>
+    </AuthProvider>
   );
 }

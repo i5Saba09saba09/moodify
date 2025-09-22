@@ -208,12 +208,6 @@ export default function Home() {
       className="page home-page pretty"
       style={{ "--home-tilt": 8, "--home-intensity": intensity }}
     >
-      {/* Add login and register buttons */}
-      <button onClick={() => setShowLogin(true)}>SignIn</button><br></br>
-      <button onClick={() => setShowRegister(true)}>SignUp</button>
-      {showLogin && <Login toggle={() => setShowLogin(false)} />}
-      {showRegister && <Login toggle={() => setShowRegister(false)} register />}
-
       {/* Hero */}
       <header ref={heroRef} className="mood-hero home home-hero">
         <Particles variant="inspired" count={36} />
