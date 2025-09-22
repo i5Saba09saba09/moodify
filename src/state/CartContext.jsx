@@ -5,31 +5,51 @@
 // using React's Context API and useReducer hook.
 import React, { createContext, useContext, useMemo, useReducer, useEffect } from "react";
 
+const STORAGE_KEY = "moodify_cart_v2";
 const CartCtx = createContext(null);
 
-// ---------- Reducer ----------
+// ---- helpers ----
+const idOf = (itemOrId) => {
+  const id = typeof itemOrId === "object" ? itemOrId?.id : itemOrId;
+  return id == null ? null : String(id); // keep keys consistent
+};
+const clampQty = (q) => Math.max(1, Math.min(99, Math.floor(Number(q) || 0)));
+
 function reducer(state, action) {
   switch (action.type) {
     case "add": {
+      const id = idOf(action.item);
+      if (id == null) return state;
       const next = new Map(state.items);
-      const id = action.item?.id;
-      if (id == null) return state; // guard
-      const existing = next.get(id);
-      const qty = existing ? existing.qty + 1 : 1;
+      const row = next.get(id);
+      const qty = clampQty((row?.qty || 0) + (action.n || 1));
       next.set(id, { item: action.item, qty });
       return { ...state, items: next };
     }
-    case "dec": {
+    case "setQty": {
+      const id = idOf(action.id);
+      if (id == null) return state;
       const next = new Map(state.items);
-      const it = next.get(action.id);
-      if (!it) return state;
-      if (it.qty <= 1) next.delete(action.id);
-      else next.set(action.id, { item: it.item, qty: it.qty - 1 });
+      const row = next.get(id);
+      if (!row) return state;
+      next.set(id, { item: row.item, qty: clampQty(action.qty) });
+      return { ...state, items: next };
+    }
+    case "dec": {
+      const id = idOf(action.id);
+      if (id == null) return state;
+      const next = new Map(state.items);
+      const row = next.get(id);
+      if (!row) return state;
+      if (row.qty <= 1) next.delete(id);
+      else next.set(id, { item: row.item, qty: row.qty - 1 });
       return { ...state, items: next };
     }
     case "remove": {
+      const id = idOf(action.id);
+      if (id == null) return state;
       const next = new Map(state.items);
-      next.delete(action.id);
+      next.delete(id);
       return { ...state, items: next };
     }
     case "clear":
@@ -45,49 +65,49 @@ function reducer(state, action) {
   }
 }
 
-// ---------- Lazy init (hydrate from localStorage) ----------
+// ---- hydrate (v2, with v1 fallback) ----
 function initCartState() {
   try {
-    const raw = typeof localStorage !== "undefined" ? localStorage.getItem("moodify_cart_v1") : null;
+    const raw = typeof localStorage !== "undefined" && localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      const obj = JSON.parse(raw);
-      const entries = Array.isArray(obj.items) ? obj.items : [];
-      const map = new Map(
-        entries.map((pair) => {
-          // pair = [id, { item, qty }]
-          const idNum = Number(pair[0]); // handle string keys
-          return [Number.isNaN(idNum) ? pair[0] : idNum, pair[1]];
-        })
-      );
+      const data = JSON.parse(raw);
+      const arr = Array.isArray(data.items) ? data.items : [];
+      const map = new Map(arr.map(([k, v]) => [String(k), { item: v.item, qty: clampQty(v.qty) }]));
       return { items: map, open: false };
     }
-  } catch {
-    // ignore parse/read errors
-  }
+    // migrate old key once
+    const v1 = typeof localStorage !== "undefined" && localStorage.getItem("moodify_cart_v1");
+    if (v1) {
+      const data = JSON.parse(v1);
+      const arr = Array.isArray(data.items) ? data.items : [];
+      const map = new Map(arr.map(([k, v]) => [String(k), { item: v.item, qty: clampQty(v.qty) }]));
+      return { items: map, open: false };
+    }
+  } catch {}
   return { items: new Map(), open: false };
 }
 
-// ---------- Provider ----------
 export function CartProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, undefined, initCartState);
 
-  // persist to localStorage when items change
+  // persist items only
   useEffect(() => {
     try {
       const payload = { items: Array.from(state.items.entries()) };
-      localStorage.setItem("moodify_cart_v1", JSON.stringify(payload));
-    } catch {
-      // ignore write errors (private mode / quota)
-    }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch {}
   }, [state.items]);
 
-  const api = useMemo(() => {
-    const count = Array.from(state.items.values()).reduce((s, v) => s + (v?.qty || 0), 0);
+  // derived + API
+  const value = useMemo(() => {
+    const rows = Array.from(state.items.values());
+    const count = rows.reduce((s, r) => s + (r?.qty || 0), 0);
     return {
       open: state.open,
       count,
-      items: Array.from(state.items.values()),
-      add: (item) => dispatch({ type: "add", item }),
+      items: rows,
+      add: (item, n = 1) => dispatch({ type: "add", item, n }),
+      setQty: (id, qty) => dispatch({ type: "setQty", id, qty }),
       dec: (id) => dispatch({ type: "dec", id }),
       remove: (id) => dispatch({ type: "remove", id }),
       clear: () => dispatch({ type: "clear" }),
@@ -97,10 +117,9 @@ export function CartProvider({ children }) {
     };
   }, [state]);
 
-  return <CartCtx.Provider value={api}>{children}</CartCtx.Provider>;
+  return <CartCtx.Provider value={value}>{children}</CartCtx.Provider>;
 }
 
-// ---------- Hook ----------
 export function useCart() {
   const ctx = useContext(CartCtx);
   if (!ctx) throw new Error("useCart must be used inside <CartProvider>");

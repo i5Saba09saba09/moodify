@@ -16,6 +16,9 @@ import { CartProvider, useCart } from "./state/CartContext";
 import ToastPortal from "./components/ToastPortal";
 import Home from "./pages/Home";
 import "./App.css";
+import Checkout from "./pages/Checkout";
+import Success from "./pages/Success";
+
 
 /* ---------------------------
    Small helpers
@@ -437,6 +440,8 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/:slug" element={<MoodRoute />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/success" element={<Success />} />
               {/* fallback to first mood for unknown */}
               <Route path="*" element={<Navigate to={`/${first}`} />} />
             </Routes>

@@ -21,6 +21,7 @@ export default function Sad() {
   const [qDeb, setQDeb] = useState("");
   const [sort, setSort] = useState("popular");
   const [chip, setChip] = useState("all");
+  
 
   // debounce search a hair for smoother typing
   useEffect(() => {

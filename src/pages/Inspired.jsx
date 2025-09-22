@@ -20,6 +20,8 @@ export default function Inspired() {
   const [qDeb, setQDeb] = useState("");
   const [sort, setSort] = useState("popular");
   const [chip, setChip] = useState("all");
+  const [showSearch, setShowSearch] = useState(false);
+
 
   // debounce search
   useEffect(() => {
